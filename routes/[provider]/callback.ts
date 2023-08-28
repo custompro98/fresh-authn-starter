@@ -1,6 +1,6 @@
 import { Handlers } from "$fresh/server.ts";
 import { handleCallback } from "deno-kv-oauth";
-import { Provider, googleOauth2Client } from "../../utils/oauth2_client.ts";
+import { Provider, googleOAuth } from "../../utils/oauth2_client.ts";
 
 export const handler: Handlers = {
   async GET(req, ctx) {
@@ -41,16 +41,13 @@ const handleGoogleCallback = async (req: Request): Promise<Response> => {
     response,
     sessionId: _sesionId,
     accessToken,
-  } = await handleCallback(req, googleOauth2Client);
+  } = await handleCallback(req, googleOAuth.client);
 
-  const profileResponse = await fetch(
-    "https://openidconnect.googleapis.com/v1/userinfo",
-    {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    }
-  );
+  const profileResponse = await fetch(googleOAuth.discovery.userinfo_endpoint, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
 
   const json = await profileResponse.json();
   const profile = {

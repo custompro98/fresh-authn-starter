@@ -1,6 +1,6 @@
 import { Handlers, PageProps } from "$fresh/server.ts";
 import { getSessionAccessToken, getSessionId } from "deno-kv-oauth";
-import { Profile, googleOauth2Client } from "../utils/oauth2_client.ts";
+import { Profile, googleOAuth } from "../utils/oauth2_client.ts";
 
 export const handler: Handlers<Profile | null> = {
   async GET(req, ctx) {
@@ -11,17 +11,14 @@ export const handler: Handlers<Profile | null> = {
     }
 
     const accessToken = await getSessionAccessToken(
-      googleOauth2Client,
+      googleOAuth.client,
       sessionId
     );
-    const response = await fetch(
-      "https://openidconnect.googleapis.com/v1/userinfo",
-      {
-        headers: {
-          authorization: `Bearer ${accessToken}`,
-        },
-      }
-    );
+    const response = await fetch(googleOAuth.discovery.userinfo_endpoint, {
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+      },
+    });
     const user: Profile = await response.json();
     return ctx.render(user);
   },
@@ -42,7 +39,12 @@ export default function Home({ data }: PageProps<Profile>) {
         {data ? (
           <div className="flex flex-col items-center">
             <span className="py-1">{data.email}</span>
-            <img className="py-1" src={data.picture.toString()} width="64" height="64" />
+            <img
+              className="py-1"
+              src={data.picture.toString()}
+              width="64"
+              height="64"
+            />
             <a href="/signout">Sign out</a>
           </div>
         ) : (
