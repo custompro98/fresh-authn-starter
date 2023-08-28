@@ -2,6 +2,9 @@ import { createGoogleOAuth2Client } from "deno-kv-oauth";
 
 type OAuth2Client = ReturnType<typeof createGoogleOAuth2Client>;
 
+/**
+ * DiscoveryDocument is based on the [OpenID Discovery Document format](https://developers.google.com/identity/openid-connect/openid-connect)
+ */
 interface DiscoveryDocument {
   userinfo_endpoint: URL;
 }
