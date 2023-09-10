@@ -37,7 +37,7 @@ const googleOauth2Client = createGoogleOAuth2Client({
   defaults: {
     scope: ["openid", "email", "profile"],
   },
-  redirectUri: `http://${Deno.env.get("HOST")}:${Deno.env.get("PORT")}/${
+  redirectUri: `${Deno.env.get("HOST")}:${Deno.env.get("PORT")}/${
     Provider.GOOGLE
   }/callback`,
 });
